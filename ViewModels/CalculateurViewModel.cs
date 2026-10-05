@@ -13,6 +13,7 @@ public class CalculateurViewModel : BaseViewModel
 	private readonly INavigationService _navigation;
 	private string _message = "";
 	private string _joursAnniversaire = "";
+	private string _felicitation = "";
 
 	// Propriétés publiques : ce que le XAML voit.
 	public string Nom
@@ -42,6 +43,16 @@ public class CalculateurViewModel : BaseViewModel
 		get => _joursAnniversaire;
 		set => SetField(ref _joursAnniversaire, value);
 	}
+
+	// Affiché uniquement le jour de l'anniversaire ("Joyeux anniversaire").
+	public string Felicitation
+	{
+		get => _felicitation;
+		set { if (SetField(ref _felicitation, value))
+				  OnPropertyChanged(nameof(EstAnniversaire)); }
+	}
+
+	public bool EstAnniversaire => Felicitation != "";
 
 	// Le Calculer n'est possible que pour un nom saisi
 	// et une date de naissance qui n'est pas dans le futur.
@@ -96,8 +107,9 @@ public class CalculateurViewModel : BaseViewModel
 		Message = age >= 18 ? "Majeur" : "Mineur";
 
 		int jours = JoursAvantAnniversaire(DateNaissance, DateTime.Today);
+		Felicitation = jours == 0 ? $"🎂 Joyeux anniversaire {Nom} !" : "";
 		JoursAnniversaire = jours == 0
-			? "Joyeux anniversaire !"
+			? "C'est votre anniversaire aujourd'hui"
 			: $"Prochain anniversaire dans {jours} jour(s)";
 		ResultatVisible = true;
 	}
@@ -109,6 +121,7 @@ public class CalculateurViewModel : BaseViewModel
 		Resultat = "";
 		Message = "";
 		JoursAnniversaire = "";
+		Felicitation = "";
 		ResultatVisible = false;
 	}
 

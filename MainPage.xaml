@@ -19,6 +19,9 @@
                     Command="{Binding EffacerCommand}"/>
             <Label Text="{Binding Resultat}" FontSize="20"
                    IsVisible="{Binding ResultatVisible}"/>
+            <Label Text="{Binding Felicitation}" FontSize="22"
+                   FontAttributes="Bold" TextColor="#D9480F"
+                   IsVisible="{Binding EstAnniversaire}"/>
             <Label Text="{Binding Message}" FontSize="18"
                    FontAttributes="Bold"
                    IsVisible="{Binding ResultatVisible}"/>
