@@ -10,6 +10,7 @@ public class CalculateurViewModel : BaseViewModel
 	private string _resultat = "";
 	private bool _resultatVisible;
 	private string _message = "";
+	private string _joursAnniversaire = "";
 
 	// Propriétés publiques : ce que le XAML voit.
 	public string Nom
@@ -31,6 +32,13 @@ public class CalculateurViewModel : BaseViewModel
 	{
 		get => _message;
 		set => SetField(ref _message, value);
+	}
+
+	// Fonctionnalité 3 : jours restants avant le prochain anniversaire.
+	public string JoursAnniversaire
+	{
+		get => _joursAnniversaire;
+		set => SetField(ref _joursAnniversaire, value);
 	}
 
 	// Le Calculer n'est possible que pour un nom saisi
@@ -74,6 +82,11 @@ public class CalculateurViewModel : BaseViewModel
 
 		Resultat = $"{Nom}, vous avez {age} ans";
 		Message = age >= 18 ? "Majeur" : "Mineur";
+
+		int jours = JoursAvantAnniversaire(DateNaissance, DateTime.Today);
+		JoursAnniversaire = jours == 0
+			? "Joyeux anniversaire !"
+			: $"Prochain anniversaire dans {jours} jour(s)";
 		ResultatVisible = true;
 	}
 
@@ -83,6 +96,24 @@ public class CalculateurViewModel : BaseViewModel
 		DateNaissance = DateTime.Today.AddYears(-20);
 		Resultat = "";
 		Message = "";
+		JoursAnniversaire = "";
 		ResultatVisible = false;
+	}
+
+	// Nombre de jours entre aujourd'hui et la prochaine date anniversaire
+	// (0 si c'est aujourd'hui). Le 29 février tombe le 28 les années non bissextiles.
+	private static int JoursAvantAnniversaire(DateTime naissance, DateTime aujourdhui)
+	{
+		DateTime Anniversaire(int annee)
+		{
+			int jour = (naissance.Month == 2 && naissance.Day == 29
+						&& !DateTime.IsLeapYear(annee)) ? 28 : naissance.Day;
+			return new DateTime(annee, naissance.Month, jour);
+		}
+
+		DateTime prochain = Anniversaire(aujourdhui.Year);
+		if (prochain < aujourdhui.Date)
+			prochain = Anniversaire(aujourdhui.Year + 1);
+		return (prochain - aujourdhui.Date).Days;
 	}
 }
