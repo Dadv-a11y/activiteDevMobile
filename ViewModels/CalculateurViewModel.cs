@@ -9,6 +9,7 @@ public class CalculateurViewModel : BaseViewModel
 		DateTime.Today.AddYears(-20);
 	private string _resultat = "";
 	private bool _resultatVisible;
+	private string _message = "";
 
 	// Propriétés publiques : ce que le XAML voit.
 	public string Nom
@@ -21,8 +22,22 @@ public class CalculateurViewModel : BaseViewModel
 	public DateTime DateNaissance
 	{
 		get => _dateNaissance;
-		set => SetField(ref _dateNaissance, value);
+		set { if (SetField(ref _dateNaissance, value))
+				  CalculerCommand.Rafraichir(); }
 	}
+
+	// Fonctionnalité 1 : statut "Majeur" / "Mineur".
+	public string Message
+	{
+		get => _message;
+		set => SetField(ref _message, value);
+	}
+
+	// Le Calculer n'est possible que pour un nom saisi
+	// et une date de naissance qui n'est pas dans le futur.
+	public bool PeutCalculer
+		=> !string.IsNullOrWhiteSpace(Nom)
+		   && DateNaissance.Date <= DateTime.Today;
 
 	public string Resultat
 	{
@@ -43,7 +58,7 @@ public class CalculateurViewModel : BaseViewModel
 	{
 		CalculerCommand = new RelayCommand(
 			Calculer,
-			() => !string.IsNullOrWhiteSpace(Nom));
+			() => PeutCalculer);
 	}
 
 	// La logique métier : aucun contrôle d'interface ici.
@@ -54,6 +69,7 @@ public class CalculateurViewModel : BaseViewModel
 			DateTime.Today.AddYears(-age)) age--;
 
 		Resultat = $"{Nom}, vous avez {age} ans";
+		Message = age >= 18 ? "Majeur" : "Mineur";
 		ResultatVisible = true;
 	}
 }
