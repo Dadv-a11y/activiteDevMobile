@@ -5,8 +5,10 @@
              Title="Résultat">
 
     <VerticalStackLayout Padding="30" Spacing="16">
-        <Label x:Name="lblMessage" FontSize="22"/>
-        <Button Text="Retour" Clicked="OnRetourClicked"/>
+        <Label Text="{Binding Titre}" FontSize="22"/>
+        <Label Text="{Binding Message}" FontSize="18" FontAttributes="Bold"/>
+        <Label Text="{Binding Jours}" FontSize="16"/>
+        <Button Text="Retour" Command="{Binding RetourCommand}"/>
     </VerticalStackLayout>
 
 </ContentPage>

@@ -1,3 +1,4 @@
+using CalculateurAge.Services;
 using CalculateurAge.ViewModels;
 
 namespace CalculateurAge;
@@ -9,6 +10,6 @@ public partial class MainPage : ContentPage
 		InitializeComponent();
 		// Objet dans lequel tous les {Binding} de la page
 		// vont chercher leurs valeurs.
-		BindingContext = new CalculateurViewModel();
+		BindingContext = new CalculateurViewModel(new ShellNavigationService());
 	}
 }

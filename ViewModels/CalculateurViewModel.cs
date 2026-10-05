@@ -9,6 +9,8 @@ public class CalculateurViewModel : BaseViewModel
 		DateTime.Today.AddYears(-20);
 	private string _resultat = "";
 	private bool _resultatVisible;
+	private int _age;
+	private readonly INavigationService _navigation;
 	private string _message = "";
 	private string _joursAnniversaire = "";
 
@@ -56,7 +58,8 @@ public class CalculateurViewModel : BaseViewModel
 	public bool ResultatVisible
 	{
 		get => _resultatVisible;
-		set => SetField(ref _resultatVisible, value);
+		set { if (SetField(ref _resultatVisible, value))
+				  DetailCommand.Rafraichir(); }
 	}
 
 	// Lié à Button.Command dans le XAML.
@@ -65,12 +68,20 @@ public class CalculateurViewModel : BaseViewModel
 	// Fonctionnalité 2 : remet tous les champs à zéro.
 	public RelayCommand EffacerCommand { get; }
 
-	public CalculateurViewModel()
+	// Fonctionnalité 4 : envoie le résultat à ResultatPage via le ViewModel.
+	public RelayCommand DetailCommand { get; }
+
+	public CalculateurViewModel(INavigationService navigation)
 	{
+		_navigation = navigation;
 		CalculerCommand = new RelayCommand(
 			Calculer,
 			() => PeutCalculer);
 		EffacerCommand = new RelayCommand(Effacer);
+		DetailCommand = new RelayCommand(
+			() => _ = _navigation.AllerAResultatAsync(
+				Nom, _age, Message, JoursAnniversaire),
+			() => ResultatVisible);
 	}
 
 	// La logique métier : aucun contrôle d'interface ici.
@@ -80,6 +91,7 @@ public class CalculateurViewModel : BaseViewModel
 		if (DateNaissance.Date >
 			DateTime.Today.AddYears(-age)) age--;
 
+		_age = age;
 		Resultat = $"{Nom}, vous avez {age} ans";
 		Message = age >= 18 ? "Majeur" : "Mineur";
 
